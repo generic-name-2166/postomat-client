@@ -1,0 +1,23 @@
+[project]
+name = "postomat-client"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "attrs>=25.4",
+    "cattrs>=25.3",
+    "httpx>=0.28",
+    "pyhumps>=3.8.0",
+]
+classifiers = ["Private :: Do Not Upload"]
+
+[tool.uv.workspace]
+members = [
+    "idk/postomat-client",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.5",
+]

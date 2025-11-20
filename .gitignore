@@ -1,0 +1,6 @@
+.jj/
+
+.venv/
+dist/
+postomat_client.egg-info/
+uv.lock
