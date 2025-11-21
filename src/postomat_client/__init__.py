@@ -5,6 +5,8 @@ from typing import Any
 from attrs import define
 import cattrs
 from cattrs.converters import Converter
+import httpx
+from httpx import Response
 import humps
 
 
@@ -16,8 +18,8 @@ _converter: Converter = cattrs.Converter()
 _converter.register_structure_hook(datetime, _datetime_hook)
 
 
-type _CamelCaseParams = (
-    str | Mapping[str, _CamelCaseParams | int | None] | Sequence[_CamelCaseParams]
+type CamelCaseParams = (
+    str | Mapping[str, CamelCaseParams | int | None] | Sequence[CamelCaseParams]
 )
 
 
@@ -25,16 +27,16 @@ class CamelCaseConverter:
     converter: Converter = _converter
 
     def load[T](
-        self, params: _CamelCaseParams, data_cls: type[T], camel_to_snake: bool = True
+        self, params: CamelCaseParams, data_cls: type[T], camel_to_snake: bool = True
     ) -> T:
         """Convert camelCase keys to snake_case before structuring."""
         if camel_to_snake:
             params = humps.depascalize(params)  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
         return self.converter.structure(params, data_cls)
 
-    def dump(self, data: Any, snake_to_camel: bool = False) -> _CamelCaseParams:  # pyright: ignore[reportExplicitAny, reportAny]
+    def dump(self, data: Any, snake_to_camel: bool = False) -> CamelCaseParams:  # pyright: ignore[reportExplicitAny, reportAny]
         """Convert snake_case keys to camelCase when unstructuring."""
-        result: _CamelCaseParams = self.converter.unstructure(data)  # pyright: ignore[reportAny]
+        result: CamelCaseParams = self.converter.unstructure(data)  # pyright: ignore[reportAny]
         if snake_to_camel:
             result = humps.camelize(result)  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
         return result  # pyright: ignore[reportUnknownVariableType]
@@ -52,6 +54,22 @@ class Cell:
     block: str | None
     created_at: datetime
     updated_at: datetime
+
+
+async def get_status(base_url: str) -> list[Cell]:
+    c: CamelCaseConverter = CamelCaseConverter()
+    url: str = f"{base_url}:5003/storage"
+    async with httpx.AsyncClient() as client:
+        r: Response = await client.get(url)
+        params: CamelCaseParams = r.json()["data"]  # pyright: ignore[reportAny]
+        body: list[Cell] = c.load(params, list[Cell])
+        return body
+
+
+async def open_cell(base_url: str, cell_id: int) -> None:
+    url: str = f"{base_url}:5003/storage/{cell_id}/open"
+    async with httpx.AsyncClient() as client:
+        _: Response = await client.get(url)
 
 
 def main() -> None:

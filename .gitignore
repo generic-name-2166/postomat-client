@@ -1,5 +1,7 @@
 .jj/
 
+.ruff_cache/
+
 .venv/
 dist/
 postomat_client.egg-info/

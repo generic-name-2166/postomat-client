@@ -8,16 +8,21 @@ dependencies = [
     "attrs>=25.4",
     "cattrs>=25.3",
     "httpx>=0.28",
-    "pyhumps>=3.8.0",
+    "pyhumps>=3.8",
 ]
 classifiers = ["Private :: Do Not Upload"]
 
-[tool.uv.workspace]
-members = [
-    "idk/postomat-client",
+[tool.basedpyright]
+exclude = [
+    ".jj/*",
+    ".ruff_cache/*",
+    ".venv/*",
+    "dist/*",
+    "postomat_client.egg-info/*",
+    "uv.lock",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.14.5",
+    "ruff>=0.14",
 ]
