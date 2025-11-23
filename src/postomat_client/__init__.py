@@ -1,5 +1,6 @@
 from collections.abc import Mapping, Sequence
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 from attrs import define
@@ -70,6 +71,11 @@ async def open_cell(base_url: str, cell_id: int) -> None:
     url: str = f"{base_url}:5003/storage/{cell_id}/open"
     async with httpx.AsyncClient() as client:
         _: Response = await client.get(url)
+
+
+def scan_folder(path: Path) -> list[str]:
+    files: list[str] = [filename[0] for _path, _, filename in path.walk()]
+    return files
 
 
 def main() -> None:
