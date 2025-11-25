@@ -8,6 +8,7 @@ dependencies = [
     "attrs>=25.4",
     "cattrs>=25.3",
     "httpx>=0.28",
+    "psycopg[binary,pool]>=3.2",
     "pyhumps>=3.8",
 ]
 classifiers = ["Private :: Do Not Upload"]
