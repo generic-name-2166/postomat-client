@@ -1,6 +1,9 @@
 from collections.abc import Mapping, Sequence
 from datetime import datetime
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
+import smtplib
 from typing import Any
 
 from attrs import define
@@ -76,6 +79,21 @@ async def open_cell(base_url: str, cell_id: int) -> None:
 def scan_folder(path: Path) -> list[str]:
     files: list[str] = [filename[0] for _path, _, filename in path.walk()]
     return files
+
+
+def send_email(sender_email: str, receiver_email: str, password: str, subject: str, contents: str) -> None:
+    """
+    only yandex for now 
+    TODO which email service is used
+    """
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.attach(MIMEText(contents, "plain"))
+    with smtplib.SMTP_SSL("smtp.yandex.ru", 465) as server: # https://www.getmailbird.com/setup/access-mail-ru-via-imap-smtp
+        _ = server.login(sender_email, password)
+        _ = server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 def main() -> None:

@@ -6,3 +6,5 @@
 dist/
 postomat_client.egg-info/
 uv.lock
+
+.env
