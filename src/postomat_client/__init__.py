@@ -80,7 +80,7 @@ async def open_cell(base_url: str, cell_id: int) -> None:
 
 
 def scan_folder(path: Path) -> list[str]:
-    files: list[str] = [filename[0] for _path, _, filename in path.walk()]
+    files: list[str] = [f for _path, _dirs, filenames in path.walk() for f in filenames]
     return files
 
 
